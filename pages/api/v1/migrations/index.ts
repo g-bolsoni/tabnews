@@ -1,19 +1,30 @@
 import database from "infra/database";
 import migrationRunner from "node-pg-migrate";
 import { join } from "path";
+import { Client } from "pg";
+
+interface IDefaultObjectMigration {
+  dbClient: Client;
+  dryRun: boolean;
+  dir: string;
+  direction: "up" | "down";
+  verbose: boolean;
+  migrationsTable: string;
+}
 
 const migrations = async (req, res) => {
-  if (!req.method == "GET" || !req.method == "POST") {
+  if (req.method != "GET" && req.method != "POST") {
     res.status(405).end();
   }
 
   const dbClient = await database.getNewClient();
-  const defaulObjectMigrationsRunner = {
+
+  const defaulObjectMigrationsRunner: IDefaultObjectMigration = {
     dbClient: dbClient,
     dryRun: true,
     dir: join("infra", "migrations"),
     direction: "up",
-    verbose: true,
+    verbose: false,
     migrationsTable: "pgmigrations",
   };
 
@@ -22,7 +33,7 @@ const migrations = async (req, res) => {
       defaulObjectMigrationsRunner,
     );
     await dbClient.end();
-    res.status(200).json(pendingMigrations);
+    return res.status(200).json(pendingMigrations);
   }
 
   if (req.method == "POST") {
@@ -34,10 +45,10 @@ const migrations = async (req, res) => {
     await dbClient.end();
 
     if (migratedMigrations.length > 0) {
-      res.status(201).json(migratedMigrations);
+      return res.status(201).json(migratedMigrations);
     }
 
-    res.status(200).json(migratedMigrations);
+    return res.status(200).json(migratedMigrations);
   }
 };
 
