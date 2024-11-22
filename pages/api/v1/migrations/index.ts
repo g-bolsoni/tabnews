@@ -13,7 +13,9 @@ interface IDefaultObjectMigration {
 }
 
 const migrations = async (req, res) => {
-  if (req.method != "GET" && req.method != "POST") {
+  const acceptedMethods = ["GET", "POST"];
+
+  if (!acceptedMethods.includes(req.method)) {
     res.status(405).end();
   }
 
