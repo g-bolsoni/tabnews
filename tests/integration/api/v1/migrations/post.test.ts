@@ -28,3 +28,21 @@ test("Post to /api/v1/migrations should return 200", async () => {
   expect(Array.isArray(responseBody2)).toBe(true);
   expect(responseBody2.length).toBe(0);
 });
+
+test("Delete to /api/v1/migrations should return 405 and should keep open_connections as 1", async () => {
+  const response = await fetch("http://localhost:3000/api/v1/migrations", {
+    method: "DELETE",
+  });
+
+  expect(response.status).toBe(405);
+
+  const responseStatusConnections = await fetch(
+    "http://localhost:3000/api/v1/status",
+  );
+
+  const connectionsBody = await responseStatusConnections.json();
+  const openConnections =
+    connectionsBody.dependencies.database.open_connections;
+
+  expect(openConnections).toBeLessThanOrEqual(1);
+});
