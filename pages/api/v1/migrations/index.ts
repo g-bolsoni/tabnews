@@ -1,6 +1,6 @@
 import database from "infra/database";
 import migrationRunner from "node-pg-migrate";
-import { join } from "path";
+import { resolve } from "path";
 import { Client } from "pg";
 
 interface IDefaultObjectMigration {
@@ -29,7 +29,7 @@ const migrations = async (req, res) => {
     const defaulObjectMigrationsRunner: IDefaultObjectMigration = {
       dbClient: dbClient,
       dryRun: true,
-      dir: join("infra", "migrations"),
+      dir: resolve("infra", "migrations"),
       direction: "up",
       verbose: false,
       migrationsTable: "pgmigrations",
