@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import useSWR from "swr";
+import styles from "./status.module.css";
 
 const fecthAPI = async (key: string) => {
   const response = await fetch(key);
@@ -33,10 +34,10 @@ const Status = () => {
   );
   if (isLoading) {
     return (
-      <div className="p-6 bg-gray-100 min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-          <p className="mt-4 text-gray-700">Carregando status do sistema...</p>
+      <div className={styles.loadingScreen}>
+        <div className={styles.loadingContent}>
+          <div className={styles.spinner}></div>
+          <p className={styles.loadingText}>Carregando status do sistema...</p>
         </div>
       </div>
     );
@@ -44,8 +45,8 @@ const Status = () => {
 
   if (error || !data) {
     return (
-      <div className="p-6 bg-gray-100 min-h-screen flex items-center justify-center">
-        <p className="text-red-500">
+      <div className={styles.errorScreen}>
+        <p className={styles.errorText}>
           Erro ao carregar os dados. Por favor, tente novamente mais tarde.
         </p>
       </div>
@@ -53,24 +54,20 @@ const Status = () => {
   }
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
-      <h1 className="text-2xl font-bold text-blue-600 mb-4">
-        Status do Sistema
-      </h1>
+    <div className={styles.statusContainer}>
+      <h1 className={styles.statusTitle}>Status do Sistema</h1>
 
-      <div className="bg-white shadow-md rounded-lg p-6">
-        <h2 className="text-xl font-semibold mb-4">Última atualização:</h2>
-        <p className="text-gray-700 mb-6">
+      <div className={styles.statusCard}>
+        <h2 className={styles.updateTitle}>Última atualização:</h2>
+        <p className={styles.updateText}>
           {new Date(data.updated_at).toLocaleString()}
         </p>
 
-        <h2 className="text-xl font-semibold mb-4">Dependências</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-            <h3 className="text-lg font-semibold text-blue-500 mb-2">
-              Database
-            </h3>
-            <ul className="text-gray-700">
+        <h2 className={styles.dependenciesTitle}>Dependências</h2>
+        <div className={styles.dependenciesGrid}>
+          <div className={styles.dependencyCard}>
+            <h3 className={styles.dependencyTitle}>Database</h3>
+            <ul className={styles.dependencyList}>
               <li>
                 <strong>Versão:</strong> {data.dependencies.database.version}
               </li>
