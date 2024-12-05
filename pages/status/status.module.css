@@ -1,0 +1,121 @@
+.loadingScreen {
+  padding: 1.5rem;
+  background-color: #f7fafc;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loadingContent {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.spinner {
+  width: 2rem;
+  height: 2rem;
+  border: 4px solid #4299e1;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loadingText {
+  margin-top: 1rem;
+  color: #4a5568;
+}
+
+.errorScreen {
+  padding: 1.5rem;
+  background-color: #f7fafc;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.errorText {
+  color: #f56565;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.statusContainer {
+  padding: 1.5rem;
+  background-color: #f7fafc;
+  min-height: 100vh;
+}
+
+.statusTitle {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #3182ce;
+  margin-bottom: 1rem;
+}
+
+.statusCard {
+  background-color: #ffffff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+}
+
+.updateTitle,
+.dependenciesTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.updateText {
+  color: #4a5568;
+  margin-bottom: 1.5rem;
+}
+
+.dependenciesGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .dependenciesGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.dependencyCard {
+  background-color: #f9fafb;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.dependencyTitle {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #4299e1;
+  margin-bottom: 0.5rem;
+}
+
+.dependencyList {
+  color: #4a5568;
+}
+
+.dependencyList strong {
+  font-weight: bold;
+}
+
+/* Spinner Animation */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
