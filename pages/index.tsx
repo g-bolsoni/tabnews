@@ -1,9 +1,15 @@
 import React from "react";
 
-// import { Container } from './styles';
-
 const Home = () => {
-  return <h1>Home</h1>;
+  return (
+    <>
+      <div className="w-full h-screen flex items-center justify-center">
+        <h1 className="text-2xl text-neutral-200 font-bold p-6">
+          Welcome to my website 😁
+        </h1>
+      </div>
+    </>
+  );
 };
 
 export default Home;
