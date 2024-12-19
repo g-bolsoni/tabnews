@@ -1,4 +1,5 @@
 import { Client } from "pg";
+import CustomErrors from "utils/customErros";
 
 const query = async (queryObject) => {
   let client: Client;
@@ -8,7 +9,9 @@ const query = async (queryObject) => {
     const result = await client.query(queryObject);
     return result;
   } catch (error) {
-    console.error(error);
+    if (error instanceof CustomErrors) {
+      throw error;
+    }
     throw error;
   } finally {
     client.end();
@@ -26,6 +29,14 @@ const getNewClient = async () => {
   });
 
   await client.connect();
+
+  // throw new CustomErrors({
+  //   action: "action teste",
+  //   message: "message teste",
+  //   name: "Name teste",
+  //   statusCode: 400,
+  // });
+
   return client;
 };
 
