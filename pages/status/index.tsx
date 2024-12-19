@@ -25,7 +25,7 @@ export interface Database {
 
 const ScreenLoading = () => {
   return (
-    <div className="p-6 bg-neutral-800 min-h-screen flex items-center justify-center">
+    <div className="p-6 bg-neutral-800 h-full flex items-center justify-center">
       <div className="flex items-center justify-center flex-col gap-5">
         <div className="w-8 h-8 border-4 border-blue-500 rounded-full animate-spin"></div>
         <p className="text-neutral-200 mt-4">Carregando status do sistema...</p>
@@ -35,7 +35,7 @@ const ScreenLoading = () => {
 };
 const ScreenError = () => {
   return (
-    <div className="p-6 bg-neutral-800 min-h-screen flex items-center justify-center">
+    <div className="p-6 bg-neutral-800 h-full flex items-center justify-center">
       <p className="text-red-700 text-base font-bold text-center flex flex-col gap-2">
         <span> Erro ao carregar os dados.</span>
         <span>Por favor, tente novamente mais tarde.</span>
@@ -61,7 +61,7 @@ const Status = () => {
         ) : error || !data ? (
           <ScreenError />
         ) : (
-          <div className="bg-neutral-800 min-h-screen">
+          <div className="bg-neutral-800 h-full">
             <h1 className="text-2xl font-bold text-neutral-200 mb-4">
               Status do Sistema
             </h1>

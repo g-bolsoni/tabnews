@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  @apply h-screen w-screen bg-neutral-800;
+body,
+html {
+  @apply h-full w-full bg-neutral-800 m-0 p-0 box-border;
 }
