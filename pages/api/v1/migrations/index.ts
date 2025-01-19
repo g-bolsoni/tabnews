@@ -1,7 +1,9 @@
+import { createRouter } from "next-connect";
 import database from "infra/database";
 import migrationRunner from "node-pg-migrate";
 import { resolve } from "path";
 import { Client } from "pg";
+import { InternalServerError, MethodNotAllowedError } from "infra/error";
 
 interface IDefaultObjectMigration {
   dbClient: Client;
@@ -12,7 +14,31 @@ interface IDefaultObjectMigration {
   migrationsTable: string;
 }
 
-const migrations = async (req, res) => {
+const router = createRouter();
+
+router.get(migrations).post(migrations);
+
+export default router.handler({
+  onNoMatch: onNoMatchHandler,
+  onError: onErrorHandler,
+});
+
+function onErrorHandler(error, req, res) {
+  const publicErrorObject = new InternalServerError({
+    cause: error,
+  });
+
+  console.log("\n Erro dentro do catch do arquivo /status  ");
+
+  res.status(500).json(publicErrorObject);
+}
+
+function onNoMatchHandler(req, res) {
+  const publicErrorObject = new MethodNotAllowedError();
+  res.status(publicErrorObject.status_code).json(publicErrorObject);
+}
+
+async function migrations(req, res) {
   const acceptedMethods = ["GET", "POST"];
 
   if (!acceptedMethods.includes(req.method)) {
@@ -61,6 +87,4 @@ const migrations = async (req, res) => {
   } finally {
     await dbClient.end();
   }
-};
-
-export default migrations;
+}

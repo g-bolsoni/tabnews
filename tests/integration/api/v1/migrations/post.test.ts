@@ -37,6 +37,17 @@ describe("POST /api/v1/migrations", () => {
         expect(Array.isArray(responseBody2)).toBe(true);
         expect(responseBody2.length).toBe(0);
       });
+
+      test("Running method POST", async () => {
+        const response = await fetch("http://localhost:3000/api/v1/migrations");
+        expect(response.status).toBe(200);
+
+        const responseBody = await response.json();
+        console.log("Teste");
+        console.log(responseBody);
+
+        expect(Array.isArray(responseBody)).toBe(true);
+      });
     });
   });
 });
