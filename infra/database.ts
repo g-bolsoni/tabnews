@@ -19,7 +19,14 @@ const query = async (queryObject) => {
 const getNewClient = async () => {
   console.log("====================================");
   console.log("node env => ");
-  console.log(process.env.NODE_ENV);
+  console.log({
+    host: process.env.POSTGRES_HOST,
+    port: parseInt(process.env.POSTGRES_PORT),
+    user: process.env.POSTGRES_USER,
+    database: process.env.POSTGRES_DB,
+    password: process.env.POSTGRES_PASSWORD,
+    ssl: process.env.NODE_ENV == "production" ? true : false,
+  });
   console.log("====================================");
 
   const client = new Client({
