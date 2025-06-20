@@ -27,7 +27,7 @@ const getNewClient = async () => {
     password: process.env.POSTGRES_PASSWORD,
     ssl: process.env.NODE_ENV == "production" ? true : false,
   });
-  console.log("====================================");
+  console.log("=====================================");
 
   const client = new Client({
     host: process.env.POSTGRES_HOST,
