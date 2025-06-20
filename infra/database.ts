@@ -17,6 +17,11 @@ const query = async (queryObject) => {
 };
 
 const getNewClient = async () => {
+  console.log("====================================");
+  console.log("node env => ");
+  console.log(process.env.NODE_ENV);
+  console.log("====================================");
+
   const client = new Client({
     host: process.env.POSTGRES_HOST,
     port: parseInt(process.env.POSTGRES_PORT),
