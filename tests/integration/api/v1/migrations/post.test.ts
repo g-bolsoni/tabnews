@@ -43,9 +43,6 @@ describe("POST /api/v1/migrations", () => {
         expect(response.status).toBe(200);
 
         const responseBody = await response.json();
-        console.log("Teste");
-        console.log(responseBody);
-
         expect(Array.isArray(responseBody)).toBe(true);
       });
     });
