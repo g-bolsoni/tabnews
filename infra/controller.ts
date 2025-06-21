@@ -7,7 +7,7 @@ function onErrorHandler(error, req, res) {
   });
 
   console.error(publicErrorObject);
-  res.status(500).json(publicErrorObject);
+  res.status(publicErrorObject.statusCode).json(publicErrorObject);
 }
 
 function onNoMatchHandler(req, res) {
