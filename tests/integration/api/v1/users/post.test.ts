@@ -3,28 +3,24 @@ import database from "infra/database";
 
 beforeAll(async () => {
   await orchestrator.waitForAllServices();
-  await orchestrator.clearDatabase(); // se comentar, o teste passa, mas não deve
+  await orchestrator.clearDatabase();
   await orchestrator.runPendingMigrations();
 });
 
 describe("POST /api/v1/users", () => {
   describe("Anonymous user", () => {
     test("With unique and valid data", async () => {
-      // await database.query({
-      //   text: "INSERT INTO users (id, username) VALUES ($1, $2)",
-      //   values: ["6e715249-e4ca-4c04-ae86-43c4b2073daa", "giovane_souza"],
-      // });
+      await database.query({
+        text: "INSERT INTO users (username, email, password) VALUES ($1, $2, $3)",
+        values: ["giovanesouza", "giovane.essado@irroba.com", "123456"],
+      });
 
       const users = await database.query("SELECT * FROM users;");
       console.log(users.rows);
 
-      // const response = await fetch("http://localhost:3000/api/v1/users", {
-      //   method: "POST",
-      // });
-
-      const response = {
-        status: 201,
-      };
+      const response = await fetch("http://localhost:3000/api/v1/users", {
+        method: "POST",
+      });
 
       expect(response.status).toBe(201);
     });
