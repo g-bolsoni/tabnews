@@ -8,7 +8,7 @@ interface IDefaultObjectMigration {
   dryRun: boolean;
   dir: string;
   direction: "up" | "down";
-  verbose: boolean;
+  log: () => void;
   migrationsTable: string;
 }
 
@@ -17,7 +17,7 @@ const defaulObjectMigrationsRunner: IDefaultObjectMigration = {
   dryRun: true,
   dir: resolve("infra", "migrations"),
   direction: "up",
-  verbose: false,
+  log: () => {},
   migrationsTable: "pgmigrations",
 };
 
@@ -38,7 +38,7 @@ async function listPendingMigrations() {
   }
 }
 
-async function runPendingMIgrations() {
+async function runPendingMigrations() {
   let dbClient: Client;
 
   try {
@@ -58,7 +58,7 @@ async function runPendingMIgrations() {
 
 const migrator = {
   listPendingMigrations,
-  runPendingMIgrations,
+  runPendingMigrations,
 };
 
 export default migrator;
