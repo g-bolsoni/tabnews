@@ -1,5 +1,7 @@
 import orchestrator from "tests/orchestrator";
 import { version as uuidVersion } from "uuid";
+import user from "models/user"
+import password from "models/password";
 
 beforeAll(async () => {
   await orchestrator.waitForAllServices();
@@ -16,7 +18,7 @@ describe("POST /api/v1/users", () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          username: "Giovane Souza",
+          username: "GiovaneSouza",
           email: "giovane.souza@irroba.com",
           password: "123456",
         }),
@@ -27,9 +29,9 @@ describe("POST /api/v1/users", () => {
       const responseBody = await response.json();
       expect(responseBody).toEqual({
         id: responseBody.id,
-        username: "Giovane Souza",
+        username: "GiovaneSouza",
         email: "giovane.souza@irroba.com",
-        password: "123456",
+        password: responseBody.password,
         created_at: responseBody.created_at,
         updated_at: responseBody.updated_at,
       });
@@ -37,6 +39,19 @@ describe("POST /api/v1/users", () => {
       expect(uuidVersion(responseBody.id)).toBe(4);
       expect(Date.parse(responseBody.created_at)).not.toBeNaN();
       expect(Date.parse(responseBody.updated_at)).not.toBeNaN();
+
+      const userInDatabase = await user.findOneByUsername('GiovaneSouza');
+      const correctPasswordMatch=  await password.compare("123456", userInDatabase.password);
+      const inCorrectPasswordMatch=  await password.compare("incorrectPassword", userInDatabase.password);
+
+      expect(correctPasswordMatch).toBe(true);
+      expect(inCorrectPasswordMatch).toBe(false);
+
+
+
+
+
+      
     });
 
     test("With duplicated 'email'", async () => {

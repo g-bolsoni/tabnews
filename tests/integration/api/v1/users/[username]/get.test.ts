@@ -7,7 +7,7 @@ beforeAll(async () => {
   await orchestrator.runPendingMigrations();
 });
 
-describe("GET /api/v1/users/[username ]", () => {
+describe("GET /api/v1/users/[username]", () => {
   describe("Anonymous user", () => {
     test("With exact case match", async () => {
       const requestBody = {
@@ -37,7 +37,7 @@ describe("GET /api/v1/users/[username ]", () => {
         id: response2Body.id,
         username: "MesmoCase",
         email: "mesmo.case@email.com",
-        password: "123456",
+        password: response2Body.password,
         created_at: response2Body.created_at,
         updated_at: response2Body.updated_at,
       });
@@ -75,7 +75,7 @@ describe("GET /api/v1/users/[username ]", () => {
         id: response2Body.id,
         username: "CaseDiferente",
         email: "case.diferente@email.com",
-        password: "123456",
+        password: response2Body.password,
         created_at: response2Body.created_at,
         updated_at: response2Body.updated_at,
       });

@@ -1,5 +1,6 @@
 import database from "infra/database";
 import { NotFoundError, ValidationError } from "infra/error";
+import password from "./password";
 
 interface IUserInputValues {
   username: string;
@@ -10,6 +11,7 @@ interface IUserInputValues {
 const create = async (userInputValue: IUserInputValues) => {
   await validateUnicEmail(userInputValue.email);
   await validateUnicUsername(userInputValue.username);
+  await hashPasswordInObject(userInputValue);
 
   const newUser = await runInsertQuery(userInputValue);
   return newUser;
@@ -79,6 +81,11 @@ const create = async (userInputValue: IUserInputValues) => {
         cause: "O nome de usuário informado está sendo utilizado.",
       });
     }
+  }
+
+  async function hashPasswordInObject(userInputValues: IUserInputValues){
+    const hashedPassword = await password.hash(userInputValues.password);    
+    userInputValues.password = hashedPassword;
   }
 };
 
