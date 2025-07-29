@@ -41,8 +41,8 @@ describe("POST /api/v1/users", () => {
       expect(Date.parse(responseBody.updated_at)).not.toBeNaN();
 
       const userInDatabase = await user.findOneByUsername('GiovaneSouza');
-      const correctPasswordMatch=  await password.compare("123456", userInDatabase.password);
-      const inCorrectPasswordMatch=  await password.compare("incorrectPassword", userInDatabase.password);
+      const correctPasswordMatch = await password.compare("123456", userInDatabase.password);
+      const inCorrectPasswordMatch = await password.compare("incorrectPassword", userInDatabase.password);
 
       expect(correctPasswordMatch).toBe(true);
       expect(inCorrectPasswordMatch).toBe(false);
@@ -51,7 +51,7 @@ describe("POST /api/v1/users", () => {
 
 
 
-      
+
     });
 
     test("With duplicated 'email'", async () => {
@@ -88,7 +88,7 @@ describe("POST /api/v1/users", () => {
       expect(response2Body).toEqual({
         name: "ValidationError",
         message: "O email informado já está sendo utilizado.",
-        action: "Utilize outro email para realizar o cadastro.",
+        action: "Utilize outro email para realizar esta operação.",
         status_code: 400,
       });
     });
@@ -123,8 +123,8 @@ describe("POST /api/v1/users", () => {
       const response2Body = await response2.json();
       expect(response2Body).toEqual({
         name: "ValidationError",
-        message: "O nome de usuário informado está sendo utilizado.",
-        action: "Utilize outro nome para realizar o cadastro.",
+        message: "O username informado já está sendo utilizado.",
+        action: "Utilize outro username para realizar esta operação",
         status_code: 400,
       });
     });
