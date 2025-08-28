@@ -3,6 +3,7 @@ import { NotFoundError, ValidationError } from "infra/error";
 import password from "./password";
 
 interface IUserInputValues {
+  id?: string;
   username: string;
   email: string;
   password: string;
@@ -13,8 +14,6 @@ interface IUserUpdateValues {
   email?: string;
   password?: string;
 }
-
-
 
 const create = async (userInputValue: IUserInputValues) => {
   await validateUnicUsername(userInputValue.username);
@@ -43,11 +42,6 @@ const create = async (userInputValue: IUserInputValues) => {
     });
 
     return results.rows[0];
-  }
-
-  async function hashPasswordInObject(userInputValues: IUserInputValues) {
-    const hashedPassword = await password.hash(userInputValues.password);
-    userInputValues.password = hashedPassword;
   }
 };
 
@@ -95,8 +89,42 @@ const update = async (username: string, userInputValues: IUserUpdateValues) => {
     await validateUnicEmail(userInputValues.email);
   }
 
+  if ("password" in userInputValues) {
+    await hashPasswordInObject(userInputValues);
+  }
 
-}
+  const userWithNewValues = { ...currentUser, ...userInputValues };
+
+  const updatedUser = await runUpdateQuery(userWithNewValues);
+
+  return updatedUser;
+};
+
+const runUpdateQuery = async (userWithNewValues: IUserInputValues) => {
+  const results = await database.query({
+    text: `
+          UPDATE
+            users
+          SET
+            username = $2,
+            email = $3,
+            password = $4,
+            updated_at = timezone('utc', now())
+          WHERE
+            id = $1
+          RETURNING
+            *
+        `,
+    values: [
+      userWithNewValues.id,
+      userWithNewValues.username,
+      userWithNewValues.email,
+      userWithNewValues.password,
+    ],
+  });
+
+  return results.rows[0];
+};
 
 async function validateUnicUsername(username: string) {
   const results = await database.query({
@@ -144,11 +172,17 @@ async function validateUnicEmail(email: string) {
   }
 }
 
+async function hashPasswordInObject(
+  userInputValues: IUserInputValues | IUserUpdateValues,
+) {
+  const hashedPassword = await password.hash(userInputValues.password);
+  userInputValues.password = hashedPassword;
+}
 
 const user = {
   create,
   findOneByUsername,
-  update
+  update,
 };
 
 export default user;
