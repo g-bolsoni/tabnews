@@ -1,6 +1,7 @@
 import database from "infra/database";
 import { NotFoundError, ValidationError } from "infra/error";
 import password from "./password";
+import { error } from "console";
 
 interface IUserInputValues {
   id?: string;
@@ -72,6 +73,35 @@ const findOneByUsername = async (username: string) => {
         action: "Verifique se o username está digitado corretamente.",
         cause: "O username informado não foi encontrado no sistema",
       });
+    }
+
+    return results.rows[0];
+  }
+};
+
+const findOneByEmail = async (email: string) => {
+  const userFound = await runSelectQuery(email);
+
+  return userFound;
+
+  async function runSelectQuery(email: string) {
+    const results = await database.query({
+      text: `
+        SELECT
+          *
+        FROM
+          users
+        WHERE
+          LOWER(email) = LOWER($1)
+        LIMIT
+          1
+        ;`,
+
+      values: [email],
+    });
+
+    if (results.rowCount === 0) {
+      throw new Error("O email informado não foi encontrado no sistema");
     }
 
     return results.rows[0];
@@ -182,6 +212,7 @@ async function hashPasswordInObject(
 const user = {
   create,
   findOneByUsername,
+  findOneByEmail,
   update,
 };
 

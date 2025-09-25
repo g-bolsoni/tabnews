@@ -1,14 +1,15 @@
 export class InternalServerError extends Error {
   action: string;
-  status_code: number;
+  status_code?: number;
 
-  constructor({ cause, status_code }) {
-    super("Um erro interno não esperado aconteceu.", {
-      cause,
-    });
+  constructor({
+    cause,
+    status_code,
+  }: { cause?: unknown; status_code?: number } = {}) {
+    super("Um erro interno não esperado aconteceu.", { cause });
     this.name = "InternalServerError";
     this.action = "Entre em contato com o suporte.";
-    this.status_code = status_code || 500;
+    this.status_code = status_code ?? 500;
   }
 
   toJSON() {
@@ -78,6 +79,28 @@ export class ValidationError extends Error {
     this.name = "ValidationError";
     this.action = action || "Ajuste os dados enviados e tente novamente.";
     this.status_code = 400;
+  }
+
+  toJSON() {
+    return {
+      name: this.name,
+      message: this.message,
+      action: this.action,
+      status_code: this.status_code,
+    };
+  }
+}
+
+export class UnauthorizedError extends Error {
+  action: string;
+  status_code: number;
+
+  constructor({ message, action }) {
+    super(message || "Usuário não autenticado.");
+
+    this.name = "UnauthorizedError";
+    this.action = action || "Faça login para continuar.";
+    this.status_code = 401;
   }
 
   toJSON() {
