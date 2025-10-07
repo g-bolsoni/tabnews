@@ -1,7 +1,6 @@
 import database from "infra/database";
 import { NotFoundError, ValidationError } from "infra/error";
 import password from "./password";
-import { error } from "console";
 
 interface IUserInputValues {
   id?: string;
@@ -101,7 +100,11 @@ const findOneByEmail = async (email: string) => {
     });
 
     if (results.rowCount === 0) {
-      throw new Error("O email informado não foi encontrado no sistema");
+      throw new NotFoundError({
+        message: "O email informado não foi encontrado no sistema.",
+        action: "Verifique se o email está digitado corretamente.",
+        cause: "O email informado não foi encontrado no sistema.",
+      });
     }
 
     return results.rows[0];
