@@ -1,7 +1,7 @@
 import { EXPIRATION_IN_MILLISECONDS } from "../../../../../constants";
 import orchestrator from "tests/orchestrator";
 import { version as uuidVersion } from "uuid";
-import setCookieParser from 'set-cookie-parser'
+import setCookieParser from "set-cookie-parser";
 
 beforeAll(async () => {
   await orchestrator.waitForAllServices();
@@ -100,7 +100,7 @@ describe("POST /api/v1/session", () => {
         },
         body: JSON.stringify({
           email,
-          password: "correct-password"
+          password: "correct-password",
         }),
       });
 
@@ -114,7 +114,7 @@ describe("POST /api/v1/session", () => {
         user_id: id,
         expires_at: responseBody.expires_at,
         created_at: responseBody.created_at,
-        updated_at: responseBody.updated_at
+        updated_at: responseBody.updated_at,
       });
 
       expect(uuidVersion(responseBody.id)).toBe(4);
@@ -122,28 +122,26 @@ describe("POST /api/v1/session", () => {
       expect(Date.parse(responseBody.created_at)).not.toBeNaN();
       expect(Date.parse(responseBody.updated_at)).not.toBeNaN();
 
-      const expiresAt = new Date(responseBody.expires_at)
-      const createdAt = new Date(responseBody.created_at)
+      const expiresAt = new Date(responseBody.expires_at);
+      const createdAt = new Date(responseBody.created_at);
 
-      expiresAt.setMilliseconds(0)
-      createdAt.setMilliseconds(0)
+      expiresAt.setMilliseconds(0);
+      createdAt.setMilliseconds(0);
 
-      const datesDiff =  expiresAt.valueOf() - createdAt.valueOf();
+      const datesDiff = expiresAt.valueOf() - createdAt.valueOf();
 
-      expect(datesDiff).toBe(EXPIRATION_IN_MILLISECONDS)
+      expect(datesDiff).toBe(EXPIRATION_IN_MILLISECONDS);
 
       const parsedSetCookie = setCookieParser(response, {
-        map: true
-      })
+        map: true,
+      });
       expect(parsedSetCookie.session_id).toEqual({
-        name: 'session_id',
+        name: "session_id",
         value: responseBody.token,
         maxAge: EXPIRATION_IN_MILLISECONDS / 1000,
-        path: '/',
-        httpOnly: true
+        path: "/",
+        httpOnly: true,
       });
-
-
     });
   });
 });
