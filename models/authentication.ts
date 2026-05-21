@@ -1,7 +1,7 @@
 import { NotFoundError, UnauthorizedError } from "infra/error";
 import password from "./password";
 import user from "./user";
-import { User } from "interfaces/InterfaceTables";
+import { IUser } from "interfaces/InterfaceTables";
 
 const defaultErrorMessages = {
   message: "Dados de autenticação não conferem.",
@@ -11,7 +11,7 @@ const defaultErrorMessages = {
 const getAuthenticatedUser = async (
   email: string,
   providePassword: string,
-): Promise<User> => {
+): Promise<IUser> => {
   try {
     const storedUser = await findUserByEmail(email);
     await validatePassword(providePassword, storedUser.password);
@@ -26,7 +26,7 @@ const getAuthenticatedUser = async (
 };
 
 const findUserByEmail = async (email: string) => {
-  let storagedUser: User;
+  let storagedUser: IUser;
 
   try {
     storagedUser = await user.findOneByEmail(email);
