@@ -24,6 +24,26 @@ const create = async (userId: string) => {
   return sessionResult.rows[0];
 };
 
-const session = { create };
+const findByToken = async (token: string) => {
+  if (!token) throw new Error("Token is required");
+
+  const sessionResult = await database.query({
+    text: `
+      SELECT
+        *
+      FROM
+        sessions
+      WHERE
+        token = $1
+        AND expires_at > NOW()
+      LIMIT 1
+      ;`,
+    values: [token],
+  });
+
+  return sessionResult.rows[0];
+}
+
+const session = { create, findByToken };
 
 export default session;
