@@ -12,7 +12,6 @@ interface CreateUserObject {
   password?: string;
 }
 
-
 const waitForAllServices = async () => {
   await waitForWebServer();
 
