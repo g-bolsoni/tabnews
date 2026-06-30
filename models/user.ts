@@ -1,6 +1,7 @@
 import database from "infra/database";
 import { NotFoundError, ValidationError } from "infra/error";
 import password from "./password";
+import { IUser } from "interfaces/InterfaceTables";
 
 interface IUserInputValues {
   id?: string;
@@ -20,16 +21,8 @@ const create = async (userInputValue: IUserInputValues) => {
   await validateUnicEmail(userInputValue.email);
   await hashPasswordInObject(userInputValue);
 
-  const newUser = await runInsertQuery(userInputValue);
-  return newUser;
-
-  async function runInsertQuery({
-    username,
-    email,
-    password,
-  }: IUserInputValues) {
-    const results = await database.query({
-      text: `
+  const results = await database.query({
+    text: `
         INSERT INTO
           users (username, email, password)
         VALUES
@@ -38,11 +31,39 @@ const create = async (userInputValue: IUserInputValues) => {
           *
         ;`,
 
-      values: [username, email, password],
-    });
+    values: [
+      userInputValue.username,
+      userInputValue.email,
+      userInputValue.password,
+    ],
+  });
 
-    return results.rows[0];
+  return results.rows[0];
+};
+
+const findById = async (id: Pick<IUser, "id">) => {
+  const results = await database.query({
+    text: `
+        SELECT
+          *
+        FROM
+          users
+        WHERE
+          id = $1
+        LIMIT 1
+        ;`,
+    values: [id],
+  });
+
+  if (results.rowCount === 0) {
+    throw new NotFoundError({
+      message: "O username informado não foi encontrado no sistema",
+      action: "Verifique se o username está digitado corretamente.",
+      cause: "O username informado não foi encontrado no sistema",
+    });
   }
+
+  return results.rows[0];
 };
 
 const findOneByUsername = async (username: string) => {
@@ -214,6 +235,7 @@ async function hashPasswordInObject(
 
 const user = {
   create,
+  findById,
   findOneByUsername,
   findOneByEmail,
   update,
