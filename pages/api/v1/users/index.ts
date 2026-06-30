@@ -21,6 +21,7 @@ async function getHandler(req: NextApiRequest, res: NextApiResponse) {
   await controller.setSessionCookie(token, res)
 
   const userData = await user.findById(user_id);
+  res.setHeader("Cache-Control", "no-store, no-cache, max-age=0, must-revalidate");
   return res.status(200).json({ ...userData });
 }
 
