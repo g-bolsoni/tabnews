@@ -51,6 +51,7 @@
     "@types/pg": "8.11.10",
     "@types/prettier": "3.0.0",
     "@types/react": "18.3.12",
+    "@types/set-cookie-parser": "^2.4.10",
     "autoprefixer": "^10.4.20",
     "commitizen": "4.3.1",
     "concurrently": "8.2.2",
