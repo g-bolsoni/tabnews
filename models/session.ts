@@ -42,14 +42,14 @@ const findByToken = async (token: string) => {
     values: [token],
   });
 
-  if(sessionResult.rows.length === 0) {
+  if (sessionResult.rows.length === 0) {
     throw new UnauthorizedError({
       message: "Usuário não possui sessão ativa",
-      action: 'Verifique se este usuário está logado e tente novamente.'
-    })
+      action: "Verifique se este usuário está logado e tente novamente.",
+    });
   }
   return sessionResult.rows[0];
-}
+};
 
 const renew = async (sessionId: string) => {
   const newExpiresAt = new Date(Date.now() + EXPIRATION_IN_MILLISECONDS);
@@ -67,8 +67,8 @@ const renew = async (sessionId: string) => {
     values: [sessionId, newExpiresAt],
   });
 
-  return result.rows[0]
-}
+  return result.rows[0];
+};
 
 const session = { create, findByToken, renew };
 

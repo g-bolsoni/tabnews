@@ -41,7 +41,8 @@ const runPendingMigrations = async () => {
 
 const createUser = async (userObject: CreateUserObject): Promise<IUser> => {
   return await user.create({
-    username: userObject?.username ?? faker.internet.username().replace(/[_.-]/g, ""),
+    username:
+      userObject?.username ?? faker.internet.username().replace(/[_.-]/g, ""),
     email: userObject?.email ?? faker.internet.email(),
     password: userObject?.password ?? faker.internet.password(),
   });
@@ -49,7 +50,7 @@ const createUser = async (userObject: CreateUserObject): Promise<IUser> => {
 
 const createSession = async (userId: string) => {
   return await session.create(userId);
-}
+};
 
 const orchestrator = {
   waitForAllServices,

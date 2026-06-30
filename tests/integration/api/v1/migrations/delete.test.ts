@@ -19,7 +19,8 @@ describe("DELETE /api/v1/migrations", () => {
       );
 
       const connectionsBody = await responseStatusConnections.json();
-      const openConnections = connectionsBody.dependencies.database.open_connections;
+      const openConnections =
+        connectionsBody.dependencies.database.open_connections;
 
       expect(openConnections).toBeLessThanOrEqual(2);
     });

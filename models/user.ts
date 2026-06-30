@@ -22,7 +22,7 @@ const create = async (userInputValue: IUserInputValues) => {
   await hashPasswordInObject(userInputValue);
 
   const results = await database.query({
-      text: `
+    text: `
         INSERT INTO
           users (username, email, password)
         VALUES
@@ -31,15 +31,19 @@ const create = async (userInputValue: IUserInputValues) => {
           *
         ;`,
 
-      values: [userInputValue.username, userInputValue.email, userInputValue.password],
-    });
+    values: [
+      userInputValue.username,
+      userInputValue.email,
+      userInputValue.password,
+    ],
+  });
 
   return results.rows[0];
 };
 
 const findById = async (id: Pick<IUser, "id">) => {
   const results = await database.query({
-      text: `
+    text: `
         SELECT
           *
         FROM
@@ -48,18 +52,18 @@ const findById = async (id: Pick<IUser, "id">) => {
           id = $1
         LIMIT 1
         ;`,
-      values: [id],
+    values: [id],
+  });
+
+  if (results.rowCount === 0) {
+    throw new NotFoundError({
+      message: "O username informado não foi encontrado no sistema",
+      action: "Verifique se o username está digitado corretamente.",
+      cause: "O username informado não foi encontrado no sistema",
     });
+  }
 
-    if (results.rowCount === 0) {
-      throw new NotFoundError({
-        message: "O username informado não foi encontrado no sistema",
-        action: "Verifique se o username está digitado corretamente.",
-        cause: "O username informado não foi encontrado no sistema",
-      });
-    }
-
-    return results.rows[0];
+  return results.rows[0];
 };
 
 const findOneByUsername = async (username: string) => {

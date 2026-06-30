@@ -13,14 +13,15 @@ beforeAll(async () => {
 describe("GET /api/v1/users", () => {
   describe("Default user", () => {
     test("With valid valid session", async () => {
-      const { id, email, password, created_at, updated_at } = await orchestrator.createUser({
-        username: "UserWithValidSession",
-      });
+      const { id, email, password, created_at, updated_at } =
+        await orchestrator.createUser({
+          username: "UserWithValidSession",
+        });
 
       const {
         token,
         expires_at: original_expires,
-        updated_at: original_updated
+        updated_at: original_updated,
       } = await orchestrator.createSession(id);
 
       const response = await fetch("http://localhost:3000/api/v1/users", {
@@ -39,7 +40,7 @@ describe("GET /api/v1/users", () => {
         email: email,
         password: password,
         created_at: created_at.toISOString(),
-        updated_at: updated_at.toISOString()
+        updated_at: updated_at.toISOString(),
       });
 
       expect(uuidVersion(responseBody.id)).toBe(4);
@@ -48,18 +49,16 @@ describe("GET /api/v1/users", () => {
 
       // Session renewal assertions
 
-      const {
-        expires_at: new_expires,
-        updated_at: new_updated
-      } = await session.findByToken(token);
+      const { expires_at: new_expires, updated_at: new_updated } =
+        await session.findByToken(token);
 
-      expect(new_expires > original_expires).toEqual(true)
-      expect(new_updated > original_updated).toEqual(true)
+      expect(new_expires > original_expires).toEqual(true);
+      expect(new_updated > original_updated).toEqual(true);
 
       // Set-cookies assertions
       let parsedSetCookie: any;
-      parsedSetCookie = setCookieParser(response,{
-          map: true,
+      parsedSetCookie = setCookieParser(response, {
+        map: true,
       });
 
       expect(parsedSetCookie.session_id).toEqual({
@@ -72,7 +71,8 @@ describe("GET /api/v1/users", () => {
     });
 
     test("With nonexistent session", async () => {
-      const nonexistentToken = 'e0445deaffba26c95fff5e5c3ae0e00bfe8a1ed548ca31fa45d04aac7972f2d1fcacf33cf94fe596c4be2868e17f26fe';
+      const nonexistentToken =
+        "e0445deaffba26c95fff5e5c3ae0e00bfe8a1ed548ca31fa45d04aac7972f2d1fcacf33cf94fe596c4be2868e17f26fe";
 
       const response = await fetch("http://localhost:3000/api/v1/users", {
         method: "GET",
@@ -87,16 +87,15 @@ describe("GET /api/v1/users", () => {
       expect(responseBody).toEqual({
         name: "UnauthorizedError",
         message: "Usuário não possui sessão ativa",
-        action: 'Verifique se este usuário está logado e tente novamente.',
+        action: "Verifique se este usuário está logado e tente novamente.",
         status_code: 401,
       });
-
     });
 
-   test("With expired session", async () => {
+    test("With expired session", async () => {
       jest.useFakeTimers({
         now: new Date(Date.now() - EXPIRATION_IN_MILLISECONDS),
-      })
+      });
 
       const { id } = await orchestrator.createUser({
         username: "UserWithExpiredSession",
@@ -119,10 +118,9 @@ describe("GET /api/v1/users", () => {
       expect(responseBody).toEqual({
         name: "UnauthorizedError",
         message: "Usuário não possui sessão ativa",
-        action: 'Verifique se este usuário está logado e tente novamente.',
+        action: "Verifique se este usuário está logado e tente novamente.",
         status_code: 401,
       });
     });
-
   });
 });

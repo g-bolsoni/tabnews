@@ -18,7 +18,7 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
   );
   const userSession = await session.create(id);
 
-  await controller.setSessionCookie(userSession.token, res)
+  await controller.setSessionCookie(userSession.token, res);
 
   return res.status(201).json(userSession);
 }

@@ -32,8 +32,8 @@ function onNoMatchHandler(req: NextApiRequest, res: NextApiResponse) {
   res.status(publicErrorObject.status_code).json(publicErrorObject);
 }
 
-async function setSessionCookie(sessionToken: string, res: NextApiResponse){
-    const setCookie = cookie.serialize("session_id", sessionToken, {
+async function setSessionCookie(sessionToken: string, res: NextApiResponse) {
+  const setCookie = cookie.serialize("session_id", sessionToken, {
     path: "/",
     maxAge: EXPIRATION_IN_MILLISECONDS / 1000,
     secure: process.env.NODE_ENV === "production",
@@ -48,7 +48,7 @@ const controller = {
     onNoMatch: onNoMatchHandler,
     onError: onErrorHandler,
   },
-  setSessionCookie
+  setSessionCookie,
 };
 
 export default controller;

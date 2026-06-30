@@ -11,17 +11,20 @@ router.get(getHandler).post(postHandler);
 export default router.handler(controller.onErrorHandlers);
 
 async function getHandler(req: NextApiRequest, res: NextApiResponse) {
-  const cookieSession = req.cookies.session_id
-  if(!cookieSession) return res.status(401).json({ error: "Unauthorized" });
+  const cookieSession = req.cookies.session_id;
+  if (!cookieSession) return res.status(401).json({ error: "Unauthorized" });
 
   const { id, user_id } = await session.findByToken(cookieSession);
-  if(!user_id) return res.status(401).json({ error: "Unauthorized" });
+  if (!user_id) return res.status(401).json({ error: "Unauthorized" });
 
   const { token } = await session.renew(id);
-  await controller.setSessionCookie(token, res)
+  await controller.setSessionCookie(token, res);
 
   const userData = await user.findById(user_id);
-  res.setHeader("Cache-Control", "no-store, no-cache, max-age=0, must-revalidate");
+  res.setHeader(
+    "Cache-Control",
+    "no-store, no-cache, max-age=0, must-revalidate",
+  );
   return res.status(200).json({ ...userData });
 }
 
