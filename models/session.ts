@@ -47,7 +47,7 @@ const findByToken = async (token: string) => {
       action: "Verifique se este usuário está logado e tente novamente.",
     });
   }
-  return sessionResult.rows[0]
+  return sessionResult.rows[0];
 };
 
 const renew = async (sessionId: string) => {
@@ -87,6 +87,6 @@ const expireByID = async (sessionId: string) => {
   return result.rows[0];
 };
 
-const session = { create, findByToken, renew, expireByID};
+const session = { create, findByToken, renew, expireByID };
 
 export default session;

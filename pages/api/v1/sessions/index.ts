@@ -25,9 +25,9 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
 
 async function deleteHandler(req: NextApiRequest, res: NextApiResponse) {
   const sessionToken = req.cookies.session_id;
-  const session_object = await session.findByToken(sessionToken)
-  const expiresSession = await session.expireByID(session_object.id)
+  const session_object = await session.findByToken(sessionToken);
+  const expiresSession = await session.expireByID(session_object.id);
   await controller.clearSessionCookie(res);
 
-  return res.status(200).json(expiresSession)
+  return res.status(200).json(expiresSession);
 }

@@ -39,9 +39,12 @@ const runPendingMigrations = async () => {
   await migrator.runPendingMigrations();
 };
 
-const createUser = async (userObject: CreateUserObject | null): Promise<IUser> => {
+const createUser = async (
+  userObject: CreateUserObject | null,
+): Promise<IUser> => {
   return await user.create({
-    username: userObject?.username ?? faker.internet.username().replace(/[_.-]/g, ""),
+    username:
+      userObject?.username ?? faker.internet.username().replace(/[_.-]/g, ""),
     email: userObject?.email ?? faker.internet.email(),
     password: userObject?.password ?? faker.internet.password(),
   });

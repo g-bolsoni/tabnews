@@ -3,7 +3,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import controller from "infra/controller";
 import user from "models/user";
 import session from "models/session";
-import {UnauthorizedError} from "../../../../infra/error";
+import { UnauthorizedError } from "../../../../infra/error";
 
 const router = createRouter();
 
