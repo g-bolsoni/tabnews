@@ -11,11 +11,12 @@ import {
 import { NextApiRequest, NextApiResponse } from "next";
 
 function onErrorHandler(error: any, req: NextApiRequest, res: NextApiResponse) {
-  if (
-    error instanceof ValidationError ||
-    error instanceof NotFoundError ||
-    error instanceof UnauthorizedError
-  ) {
+  if (error instanceof ValidationError || error instanceof NotFoundError) {
+    return res.status(error.status_code).json(error);
+  }
+
+  if (error instanceof UnauthorizedError) {
+    clearSessionCookie(res);
     return res.status(error.status_code).json(error);
   }
 
