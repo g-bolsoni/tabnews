@@ -3,6 +3,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import controller from "infra/controller";
 import user from "models/user";
 import session from "models/session";
+import { UnauthorizedError } from "../../../../infra/error";
 
 const router = createRouter();
 
@@ -12,10 +13,20 @@ export default router.handler(controller.onErrorHandlers);
 
 async function getHandler(req: NextApiRequest, res: NextApiResponse) {
   const cookieSession = req.cookies.session_id;
-  if (!cookieSession) return res.status(401).json({ error: "Unauthorized" });
+  if (!cookieSession) {
+    throw new UnauthorizedError({
+      message: "Usuário não possui sessão ativa",
+      action: "Verifique se este usuário está logado e tente novamente.",
+    });
+  }
 
   const { id, user_id } = await session.findByToken(cookieSession);
-  if (!user_id) return res.status(401).json({ error: "Unauthorized" });
+  if (!user_id) {
+    throw new UnauthorizedError({
+      message: "Usuário não possui sessão ativa",
+      action: "Verifique se este usuário está logado e tente novamente.",
+    });
+  }
 
   const { token } = await session.renew(id);
   await controller.setSessionCookie(token, res);
