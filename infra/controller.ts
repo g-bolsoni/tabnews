@@ -32,6 +32,17 @@ function onNoMatchHandler(req: NextApiRequest, res: NextApiResponse) {
   res.status(publicErrorObject.status_code).json(publicErrorObject);
 }
 
+async function clearSessionCookie(res: NextApiResponse) {
+  const setCookie = cookie.serialize("session_id", "invalid", {
+    path: "/",
+    maxAge: -1,
+    secure: process.env.NODE_ENV === "production",
+    httpOnly: true,
+  });
+
+  res.setHeader("Set-Cookie", setCookie);
+}
+
 async function setSessionCookie(sessionToken: string, res: NextApiResponse) {
   const setCookie = cookie.serialize("session_id", sessionToken, {
     path: "/",
@@ -49,6 +60,7 @@ const controller = {
     onError: onErrorHandler,
   },
   setSessionCookie,
+  clearSessionCookie
 };
 
 export default controller;

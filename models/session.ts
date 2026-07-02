@@ -27,7 +27,6 @@ const create = async (userId: string) => {
 
 const findByToken = async (token: string) => {
   if (!token) throw new Error("Token is required");
-
   const sessionResult = await database.query({
     text: `
       SELECT
@@ -42,13 +41,13 @@ const findByToken = async (token: string) => {
     values: [token],
   });
 
-  if (sessionResult.rows.length === 0) {
+  if (sessionResult.rowCount === 0) {
     throw new UnauthorizedError({
       message: "Usuário não possui sessão ativa",
       action: "Verifique se este usuário está logado e tente novamente.",
     });
   }
-  return sessionResult.rows[0];
+  return sessionResult.rows[0]
 };
 
 const renew = async (sessionId: string) => {
@@ -70,6 +69,24 @@ const renew = async (sessionId: string) => {
   return result.rows[0];
 };
 
-const session = { create, findByToken, renew };
+const expireByID = async (sessionId: string) => {
+  const result = await database.query({
+    text: `
+      UPDATE
+        sessions
+      SET
+        expires_at = expires_at - interval '1 year',
+        updated_at = NOW()
+      WHERE
+        id = $1
+      RETURNING *;
+    `,
+    values: [sessionId],
+  });
+
+  return result.rows[0];
+};
+
+const session = { create, findByToken, renew, expireByID};
 
 export default session;
