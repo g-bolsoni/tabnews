@@ -37,4 +37,7 @@ exports.up = (pgm) => {
   });
 };
 
-exports.down = false;
+exports.down = (pgm) => {
+  pgm.dropTable('users')
+};
+
