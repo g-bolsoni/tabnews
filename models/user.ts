@@ -8,6 +8,7 @@ interface IUserInputValues {
   username: string;
   email: string;
   password: string;
+  features: string[];
 }
 
 interface IUserUpdateValues {
@@ -20,13 +21,14 @@ const create = async (userInputValue: IUserInputValues) => {
   await validateUnicUsername(userInputValue.username);
   await validateUnicEmail(userInputValue.email);
   await hashPasswordInObject(userInputValue);
+  injectDefaultFeaturesInObject(userInputValue)
 
   const results = await database.query({
     text: `
         INSERT INTO
-          users (username, email, password)
+          users (username, email, password, features)
         VALUES
-          ($1, $2, $3)
+          ($1, $2, $3, $4)
         RETURNING
           *
         ;`,
@@ -35,11 +37,16 @@ const create = async (userInputValue: IUserInputValues) => {
       userInputValue.username,
       userInputValue.email,
       userInputValue.password,
+      userInputValue.features,
     ],
   });
 
   return results.rows[0];
 };
+
+const injectDefaultFeaturesInObject = (userInputValues) => {
+  userInputValues.features = ["read:activation_token"];
+}
 
 const findById = async (id: Pick<IUser, "id">) => {
   const results = await database.query({
