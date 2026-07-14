@@ -61,8 +61,7 @@ const createUser = async (
   userObject: CreateUserObject | null,
 ): Promise<IUser> => {
   return await user.create({
-    username:
-      userObject?.username ?? faker.internet.username().replace(/[_.-]/g, ""),
+    username: userObject?.username ?? faker.internet.username().replace(/[_.-]/g, ""),
     email: userObject?.email ?? faker.internet.email(),
     password: userObject?.password ?? faker.internet.password(),
   });
@@ -81,6 +80,7 @@ const getLastMail = async () => {
   const mailListResponse = await fetch(`${mailHttpUrl}/messages`);
   const mailListBody = await mailListResponse.json();
   const lastMailItem = mailListBody.pop();
+  if (!lastMailItem) return null;
 
   const textResponse = await fetch(
     `${mailHttpUrl}/messages/${lastMailItem.id}.plain`,
