@@ -4,6 +4,7 @@ import { EXPIRATION_IN_MILLISECONDS } from "../constants";
 import database from "./database";
 import webserver from "./webserver";
 import {NotFoundError} from "./error";
+import user from "../models/user";
 
 const sendEmailToUser = async (user: IUser, activationToken) => {
 
@@ -51,10 +52,32 @@ const findOneValidById = async (tokenId) => {
   return results.rows[0];
 }
 
+const markTokenAsUsed = async (activationTokenId) => {
+  const results = await database.query({
+    text: `UPDATE user_activation_tokens
+    SET 
+      used_at = timezone('utc', now()),
+      updated_at = timezone('utc', now())
+    WHERE
+      id = $1
+    RETURNING *
+      `,
+    values: [activationTokenId],
+  });
+
+
+  return results.rows[0]
+}
+
+const activateUserByUserId = async (userId: string) => {
+  return await user.setFeatures(userId, ["create:session"]);
+}
 const activation = {
   sendEmailToUser,
   create,
-  findOneValidById
+  findOneValidById,
+  markTokenAsUsed,
+  activateUserByUserId
 }
 
 
