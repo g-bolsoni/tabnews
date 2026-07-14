@@ -3,6 +3,7 @@ import {IUser} from "../interfaces/InterfaceTables";
 import { EXPIRATION_IN_MILLISECONDS } from "../constants";
 import database from "./database";
 import webserver from "./webserver";
+import {NotFoundError} from "./error";
 
 const sendEmailToUser = async (user: IUser, activationToken) => {
 
@@ -28,11 +29,24 @@ const create = async (id: Pick<IUser, "id">) => {
   return results.rows[0];
 }
 
-const findByUserId = async (id: string) => {
+const findOneValidById = async (tokenId) => {
   const results = await database.query({
-    text: `SELECT * FROM user_activation_tokens WHERE user_id = $1 LIMIT 1`,
-    values: [id]
+    text: `SELECT * FROM user_activation_tokens
+          WHERE
+              id = $1
+              AND expires_at > NOW()
+              AND used_at IS NULL
+          LIMIT 1`,
+    values: [tokenId]
   });
+
+  if (results.rowCount === 0) {
+    throw new NotFoundError({
+      message: "O token de ativação utilizado não foi encontrado no sistema ou exiprou.",
+      action: "Faça um novo cadastro.",
+      cause: "O token de ativação utilizado não foi encontrado no sistema ou exiprou.",
+    });
+  }
 
   return results.rows[0];
 }
@@ -40,7 +54,7 @@ const findByUserId = async (id: string) => {
 const activation = {
   sendEmailToUser,
   create,
-  findByUserId
+  findOneValidById
 }
 
 

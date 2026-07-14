@@ -1,6 +1,7 @@
 import orchestrator from "tests/orchestrator";
 import {IUser} from "../../../interfaces/InterfaceTables";
 import activation from "../../../infra/activations";
+import webserver from "../../../infra/webserver";
 
 beforeAll(async () => {
   await orchestrator.waitForAllServices();
@@ -43,28 +44,22 @@ describe("Use case: Registration Flow (all successful)", () => {
   test("Receive activation email", async () => {
     const lastEmail = await orchestrator.getLastMail();
 
-    const activationToken = await activation.findByUserId(createUserResponseBody.id)
-
     expect(lastEmail.sender).toBe("<contato@gbnews.com.br>");
     expect(lastEmail.recipients[0]).toBe("<registration.flow@curso.dev>");
     expect(lastEmail.subject).toBe("Ative seu cadastro no GbNews!");
     expect(lastEmail.text).toContain("RegistrationFlow");
-    expect(lastEmail.text).toContain(activationToken.id);
 
+    const activationTokenId = await orchestrator.extractUUID(lastEmail.text);
 
+    expect(lastEmail.text).toContain(
+      `${webserver.origin}/cadastro/ativar/${activationTokenId}`,
+    );
 
-    //
-    // activationTokenId = orchestrator.extractUUID(lastEmail.text);
-    //
-    // expect(lastEmail.text).toContain(
-    //   `http://localhost:3000/cadastro/ativar/${activationTokenId}`,
-    // );
-    //
-    // const activationTokenObject =
-    //   await activation.findOneValidById(activationTokenId);
-    //
-    // expect(activationTokenObject.user_id).toBe(createUserResponseBody.id);
-    // expect(activationTokenObject.used_at).toBe(null);
+    const activationTokenObject =
+      await activation.findOneValidById(activationTokenId);
+
+    expect(activationTokenObject.user_id).toBe(createUserResponseBody.id);
+    expect(activationTokenObject.used_at).toBe(null);
   });
 
   test("Activate account", async () => {
