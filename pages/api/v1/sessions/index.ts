@@ -5,7 +5,9 @@ import session from "models/session";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 const router = createRouter();
-router.post(postHandler).delete(deleteHandler);
+
+router.use(controller.injectAnonymousOrUser);
+router.post(controller.canRequest('create:session') , postHandler).delete(deleteHandler);
 
 export default router.handler(controller.onErrorHandlers);
 
@@ -27,7 +29,7 @@ async function deleteHandler(req: NextApiRequest, res: NextApiResponse) {
   const sessionToken = req.cookies.session_id;
   const session_object = await session.findByToken(sessionToken);
   const expiresSession = await session.expireByID(session_object.id);
-  await controller.clearSessionCookie(res);
+  controller.clearSessionCookie(res);
 
   return res.status(200).json(expiresSession);
 }
